@@ -1,6 +1,6 @@
 package com.myself.demo.typetree;
 
-import com.myself.demo.typetree.api.AbstractNode;
+import com.myself.demo.typetree.api.SimpleNode;
 import com.myself.demo.typetree.api.AbstractTree;
 import com.myself.demo.typetree.api.NodeType;
 import org.apache.commons.lang3.StringUtils;
@@ -13,32 +13,32 @@ import java.util.List;
 public class TypeTree extends AbstractTree {
 
     public TypeTree(){
-        TypeNode rootNode = new TypeNode("","","",NodeType.Root,0,null);
-        this.rootNode = rootNode;
+        TypeNode rootNode = new TypeNode("","","",NodeType.ROOT,0,null);
+        setRootNode(rootNode);
     }
 
     @Override
     public synchronized void addNode(String host, String type, String lb) {
         List<String> hostList = revertHost(host);
-        addNode(rootNode,hostList,type,lb);
+        addNode(getRootNode(),hostList,type,lb);
     }
 
-    private synchronized void addNode(AbstractNode parentNode, List<String> hostList, String type, String lb) {
+    private synchronized void addNode(SimpleNode parentNode, List<String> hostList, String type, String lb) {
         String hostName = hostList.remove(0);
 
-        if(!parentNode.childs.containsKey(hostName)){
+        if(!parentNode.getChilds().containsKey(hostName)){
             String path = hostName+"."+parentNode.getPath();
             if(StringUtils.isBlank(parentNode.getPath())){
                 path = hostName;
             }
-            TypeNode childNode = new TypeNode("","",path,NodeType.Foot,parentNode.getDepth()+1,parentNode);
+            TypeNode childNode = new TypeNode("","",path,NodeType.FOOT,parentNode.getDepth()+1,parentNode);
             parentNode.getChilds().put(hostName,childNode);
-            if(parentNode.getNodeType()!=NodeType.Root){
-                parentNode.setNodeType(NodeType.Normal);
+            if(parentNode.getNodeType()!=NodeType.ROOT){
+                parentNode.setNodeType(NodeType.NORMAL);
             }
         }
 
-        AbstractNode rootNode = parentNode.getChilds().get(hostName);
+        SimpleNode rootNode = parentNode.getChilds().get(hostName);
         if(hostList.isEmpty()){
             rootNode.setLb(lb);
             rootNode.setType(type);
@@ -49,7 +49,7 @@ public class TypeTree extends AbstractTree {
 
     @Override
     public synchronized void changeNode(String host, String type, String lb) {
-        AbstractNode node = getNode(host);
+        SimpleNode node = getNode(host);
         if(node!=null){
             node.setType(type);
             node.setLb(lb);
@@ -60,15 +60,15 @@ public class TypeTree extends AbstractTree {
     public synchronized void remove(String host) {
         List<String> hostList = revertHost(host);
 
-        AbstractNode parentNode = rootNode;
+        SimpleNode parentNode = getRootNode();
         while(!hostList.isEmpty()){
             String hostName = hostList.remove(0);
             if(parentNode.getChilds().containsKey(hostName)){
-                AbstractNode currentNode = parentNode.getChilds().get(hostName);
+                SimpleNode currentNode = parentNode.getChilds().get(hostName);
                 if(hostList.isEmpty()){
                     parentNode.getChilds().remove(hostName);
                     if(parentNode.getChilds().isEmpty()){
-                        parentNode.setNodeType(NodeType.Foot);
+                        parentNode.setNodeType(NodeType.FOOT);
                     }
                 }else{
                     parentNode = currentNode;
@@ -78,14 +78,14 @@ public class TypeTree extends AbstractTree {
     }
 
     @Override
-    public AbstractNode getNode(String host) {
+    public SimpleNode getNode(String host) {
         List<String> hostList = revertHost(host);
 
-        AbstractNode parentNode = rootNode;
+        SimpleNode parentNode = getRootNode();
         while(!hostList.isEmpty()){
             String hostName = hostList.remove(0);
             if(parentNode.getChilds().containsKey(hostName)){
-                AbstractNode currentNode = parentNode.getChilds().get(hostName);
+                SimpleNode currentNode = parentNode.getChilds().get(hostName);
                 if(hostList.isEmpty()){
                     return currentNode;
                 }else{
@@ -99,14 +99,14 @@ public class TypeTree extends AbstractTree {
     }
 
     @Override
-    public AbstractNode matchingNode(String host) {
+    public SimpleNode matchingNode(String host) {
         List<String> hostList = revertHost(host);
 
-        AbstractNode parentNode = rootNode;
+        SimpleNode parentNode = getRootNode();
         while(!hostList.isEmpty()){
             String hostName = hostList.remove(0);
             if(parentNode.getChilds().containsKey(hostName)){
-                AbstractNode currentNode = parentNode.getChilds().get(hostName);
+                SimpleNode currentNode = parentNode.getChilds().get(hostName);
                 if(hostList.isEmpty()){
                     return currentNode;
                 }else{

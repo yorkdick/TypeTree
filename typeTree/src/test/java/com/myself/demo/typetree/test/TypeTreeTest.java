@@ -5,7 +5,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.myself.demo.typetree.TypeTree;
-import com.myself.demo.typetree.api.AbstractNode;
+import com.myself.demo.typetree.api.SimpleNode;
 import com.myself.demo.typetree.api.NodeType;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -26,7 +26,7 @@ public class TypeTreeTest {
     @Test
     public void testInsert() throws IOException {
         TypeTree typeTree = crateTree(lbFile);
-        printTree(typeTree.rootNode);
+        printTree(typeTree.getRootNode());
     }
 
     @Test
@@ -35,18 +35,23 @@ public class TypeTreeTest {
         List<String> hosts = Files.readAllLines(Paths.get(new File(TypeTreeTest.class.getClassLoader().getResource(findTxt).getFile()).getPath()));
         long start = System.currentTimeMillis();
 
+        long printCost = 0L;
         for(String host : hosts){
-            AbstractNode abstractNode = typeTree.matchingNode(host);
+            SimpleNode simpleNode = typeTree.matchingNode(host);
 
-            if (abstractNode == null || StringUtils.isBlank(abstractNode.getType())) {
+            long start1 = System.currentTimeMillis();
+            if (simpleNode == null || StringUtils.isBlank(simpleNode.getType())) {
                 System.out.println(host + "\t not found");
             } else {
-                System.out.println(host + "\t" + abstractNode.getType());
+                System.out.println(host + "\t" + simpleNode.getType());
             }
+            long start2 = System.currentTimeMillis();
+            printCost+=(start2-start1);
         }
 
         long end = System.currentTimeMillis();
-        System.out.println("Find " + hosts.size() + " host. Totally cost:" + (end - start) + "ms.");
+        long totallyCost = end - start;
+        System.out.println("Find " + hosts.size() + " host. Totally cost:" + totallyCost + "ms, find cost:"+(totallyCost-printCost)+", print cost:"+printCost);
     }
 
 
@@ -73,10 +78,10 @@ public class TypeTreeTest {
         return typeTree;
     }
 
-    public void printTree(AbstractNode parentNode) {
-        if (parentNode.getNodeType() != NodeType.Root) {
-            Map<String, AbstractNode> childs = parentNode.getChilds();
-            if (StringUtils.isNotBlank(parentNode.getType()) || parentNode.getNodeType() == NodeType.Foot) {
+    public void printTree(SimpleNode parentNode) {
+        if (parentNode.getNodeType() != NodeType.ROOT) {
+            Map<String, SimpleNode> childs = parentNode.getChilds();
+            if (StringUtils.isNotBlank(parentNode.getType()) || parentNode.getNodeType() == NodeType.FOOT) {
                 System.out.println(parentNode.getPath() + "\t" + parentNode.getType() + "\t" + parentNode.getLb());
             }
             if (!childs.isEmpty()) {

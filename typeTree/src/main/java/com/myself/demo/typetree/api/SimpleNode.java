@@ -3,14 +3,16 @@ package com.myself.demo.typetree.api;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class AbstractNode {
+public class SimpleNode {
     private String type;
     private String lb;
     private String path;
     private NodeType nodeType;
     private int depth;
+    private SimpleNode parent;
+    private Map<String,SimpleNode> childs;
 
-    public AbstractNode(String type, String lb, String path, NodeType nodeType, int depth, AbstractNode parent) {
+    public SimpleNode(String type, String lb, String path, NodeType nodeType, int depth, SimpleNode parent) {
         this.type = type;
         this.lb = lb;
         this.path = path;
@@ -19,9 +21,6 @@ public abstract class AbstractNode {
         this.parent = parent;
         childs = new HashMap<>();
     }
-
-    public AbstractNode parent;
-    public Map<String,AbstractNode> childs;
 
     public String getType() {
         return type;
@@ -43,7 +42,7 @@ public abstract class AbstractNode {
         return depth;
     }
 
-    public AbstractNode getParent() {
+    public SimpleNode getParent() {
         return parent;
     }
 
@@ -60,7 +59,7 @@ public abstract class AbstractNode {
         this.nodeType = nodeType;
     }
 
-    public Map<String, AbstractNode> getChilds() {
+    public Map<String, SimpleNode> getChilds() {
         return childs;
     }
 }

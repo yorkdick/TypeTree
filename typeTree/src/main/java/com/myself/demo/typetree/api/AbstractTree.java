@@ -2,10 +2,16 @@ package com.myself.demo.typetree.api;
 
 import com.myself.demo.typetree.TypeNode;
 
-import java.util.Map;
-
 public abstract class AbstractTree {
-    public TypeNode rootNode;
+    private TypeNode rootNode;
+
+    public SimpleNode getRootNode(){
+        return rootNode;
+    }
+
+    protected void setRootNode(TypeNode rootNode){
+        this.rootNode = rootNode;
+    }
 
     public abstract void addNode(String host,String type, String lb);
 
@@ -13,7 +19,7 @@ public abstract class AbstractTree {
 
     public abstract void remove(String host);
 
-    public abstract AbstractNode getNode(String host);
+    public abstract SimpleNode getNode(String host);
 
-    public abstract AbstractNode matchingNode(String host);
+    public abstract SimpleNode matchingNode(String host);
 }
