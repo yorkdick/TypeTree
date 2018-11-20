@@ -2,6 +2,8 @@ package com.myself.demo.typetree.api;
 
 import com.myself.demo.typetree.TypeNode;
 
+import java.util.Map;
+
 public abstract class AbstractTree {
     public TypeNode rootNode;
 

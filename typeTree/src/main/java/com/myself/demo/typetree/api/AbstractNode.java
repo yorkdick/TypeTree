@@ -23,10 +23,6 @@ public abstract class AbstractNode {
     public AbstractNode parent;
     public Map<String,AbstractNode> childs;
 
-    public abstract void addChild(String host,String type,String lb);
-    public abstract void changeChild(String host,String type,String lb);
-    public abstract void removeChild(String host);
-
     public String getType() {
         return type;
     }
@@ -49,6 +45,19 @@ public abstract class AbstractNode {
 
     public AbstractNode getParent() {
         return parent;
+    }
+
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void setLb(String lb) {
+        this.lb = lb;
+    }
+
+    public void setNodeType(NodeType nodeType) {
+        this.nodeType = nodeType;
     }
 
     public Map<String, AbstractNode> getChilds() {
