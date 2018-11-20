@@ -20,8 +20,8 @@ import java.util.Map;
 
 public class TypeTreeTest {
 
-    public static final String lbFile = "C:\\tmp\\tree\\fenlei.json";
-    public static final String findTxt = "C:\\tmp\\tree\\look.txt";
+    public static final String lbFile = "fenlei.json";
+    public static final String findTxt = "look.txt";
 
     @Test
     public void testInsert() throws IOException {
@@ -32,25 +32,29 @@ public class TypeTreeTest {
     @Test
     public void testFind() throws IOException {
         TypeTree typeTree = crateTree(lbFile);
-        List<String> hosts = Files.readAllLines(Paths.get(new File(findTxt).getPath()));
+        List<String> hosts = Files.readAllLines(Paths.get(new File(TypeTreeTest.class.getClassLoader().getResource(findTxt).getFile()).getPath()));
         long start = System.currentTimeMillis();
+
         for(String host : hosts){
             AbstractNode abstractNode = typeTree.matchingNode(host);
+
             if (abstractNode == null || StringUtils.isBlank(abstractNode.getType())) {
                 System.out.println(host + "\t not found");
             } else {
                 System.out.println(host + "\t" + abstractNode.getType());
             }
         }
+
         long end = System.currentTimeMillis();
-        System.out.println("Find " + hosts.size() + " host cost:" + (end - start) + "ms");
+        System.out.println("Find " + hosts.size() + " host. Totally cost:" + (end - start) + "ms.");
     }
 
 
     public TypeTree crateTree(String filePath) throws IOException {
         TypeTree typeTree = new TypeTree();
         long start = System.currentTimeMillis();
-        JSONObject jsonObject = JSON.parseObject(FileUtils.readFileToString(new File(filePath), "UTF-8"));
+
+        JSONObject jsonObject = JSON.parseObject(FileUtils.readFileToString(new File(TypeTreeTest.class.getClassLoader().getResource(filePath).getFile()), "UTF-8"));
         long end = System.currentTimeMillis();
         System.out.println("Load file to json cost:" + (end - start) + "ms");
 
